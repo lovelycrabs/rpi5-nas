@@ -1,0 +1,6 @@
+gpiod==2.2.1
+gpiodevice==0.0.5
+numpy==2.1.2
+Pillow==9.4.0
+psutil==6.1.0
+spidev==3.6

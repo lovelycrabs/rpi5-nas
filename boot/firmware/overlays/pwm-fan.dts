@@ -1,0 +1,70 @@
+/dts-v1/;
+/plugin/;
+ 
+/{
+    compatible = "brcm,bcm2712";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+        
+           fan1: fan1 {
+		compatible = "pwm-fan";
+		pwms = <&rp1_pwm0 0 40000 0>;
+		cooling-levels = <0 80 170 255>;
+                #cooling-cells = <2>;
+		cooling-min-state = <0>;
+		cooling-max-state = <3>;
+           };
+        };
+    };
+    fragment@1 {
+        target = <&rp1_gpio>;
+        __overlay__ {
+            pwm_pins: pwm_pins {
+                pins = "gpio12";
+                function = "pwm0";
+            };
+        };
+    };
+ 
+    fragment@2 {
+        target = <&rp1_pwm0>;
+        frag1: __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&pwm_pins>;
+            status = "okay";
+        };
+    };
+/*
+    fragment@3 {
+        target = <&cooling_maps>;
+        __overlay__ {
+	    tepid {
+		trip = <&cpu_tepid>;
+		cooling-device = <&fan1 1 1>;
+	    };
+
+	    warm {
+		trip = <&cpu_warm>;
+		cooling-device = <&fan1 2 2>;
+	    };
+
+	    hot {
+		trip = <&cpu_hot>;
+		cooling-device = <&fan1 3 3>;
+	    };
+
+	    vhot {
+		trip = <&cpu_vhot>;
+		cooling-device = <&fan1 4 4>;
+	    };
+
+	    melt {
+		trip = <&cpu_crit>;
+		cooling-device = <&fan1 4 4>;
+	    };
+        };
+    };
+*/
+};
