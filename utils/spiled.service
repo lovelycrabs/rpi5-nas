@@ -1,0 +1,11 @@
+[Unit]
+Description=st7789 spi led display
+
+[Service]
+ExecStart=/usr/local/display/venv/bin/python /usr/local/display/main.py
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

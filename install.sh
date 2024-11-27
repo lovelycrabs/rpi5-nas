@@ -15,12 +15,21 @@ echo 'config pcie.....'
 cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 sed -i 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/g' /boot/firmware/config.txt
 sed -i 's/#dtparam=spi=on/dtparam=spi=on/g' /boot/firmware/config.txt
-cat >> /boot/firmware/config.txt <<EOF
-dtoverlay=i2c-sensor,lm75,i2c1,addr=0x48
-dtparam=pciex1_gen=3
-dtoverlay=pciex1-compat-pi5,no-mip
-dtoverlay=pwm-fan-auto
+#cat >> /boot/firmware/config.txt <<EOF
+#dtoverlay=i2c-sensor,lm75,i2c1,addr=0x48
+#dtparam=pciex1_gen=3
+#dtoverlay=pciex1-compat-pi5,no-mip
+#dtoverlay=pwm-fan-auto
 #dtoverlay=pwm-fan
 EOF
 echo 'config pcie end'
+echo 'config display...'
+sudo cp -rf ${cur_dir}/utils/display /usr/local
+python3 -m venv /usr/local/display/venv
+/usr/local/display/venv/bin/pip install -r /usr/local/display/requirements.txt
+#/usr/local/display/venv/bin/python /usr/local/display/main.py
+sudo cp -f ${cur_dir}/spiled.service /etc/systemd/system
+sudo systemctl enable spiled.service
+sudo systemctl start spiled.service
+echo 'config display end'
 echo 'install success, please reboot system!'
