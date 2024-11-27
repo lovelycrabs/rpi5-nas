@@ -1,4 +1,11 @@
 #!/bin/bash
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo 'install fail!'
+    echo "This script must be run as root." >&2
+    exit 1
+fi
+
 cur_dir=$(dirname $0)
 dts_dir=${cur_dir}/boot/firmware/overlays/
 #echo ${cur_dir}
@@ -11,24 +18,27 @@ cp -f ${dts_dir}/pwm-fan.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pwm-fan-auto.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pciex1-compat-pi5.dtbo /boot/firmware/overlays/
 echo 'install dtbo end'
-echo 'config pcie.....'
+echo 'enable pcie.....'
+sudo rpi-eeprom-config -a ${cur_dir}/conf/bootconf.txt
+echo 'pcie enabled!'
+echo 'firmware config....'
 cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 sed -i 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/g' /boot/firmware/config.txt
 sed -i 's/#dtparam=spi=on/dtparam=spi=on/g' /boot/firmware/config.txt
-#cat >> /boot/firmware/config.txt <<EOF
-#dtoverlay=i2c-sensor,lm75,i2c1,addr=0x48
-#dtparam=pciex1_gen=3
-#dtoverlay=pciex1-compat-pi5,no-mip
-#dtoverlay=pwm-fan-auto
+cat >> /boot/firmware/config.txt <<EOF
+dtoverlay=i2c-sensor,lm75,i2c1,addr=0x48
+dtparam=pciex1_gen=3
+dtoverlay=pciex1-compat-pi5,no-mip
+dtoverlay=pwm-fan-auto
 #dtoverlay=pwm-fan
 EOF
-echo 'config pcie end'
+echo 'firmware config end'
 echo 'config display...'
 sudo cp -rf ${cur_dir}/utils/display /usr/local
 python3 -m venv /usr/local/display/venv
 /usr/local/display/venv/bin/pip install -r /usr/local/display/requirements.txt
 #/usr/local/display/venv/bin/python /usr/local/display/main.py
-sudo cp -f ${cur_dir}/spiled.service /etc/systemd/system
+sudo cp -f ${cur_dir}/conf/spiled.service /etc/systemd/system
 sudo systemctl enable spiled.service
 sudo systemctl start spiled.service
 echo 'config display end'
