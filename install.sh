@@ -35,12 +35,7 @@ cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 python ./utils/config.py
 echo 'firmware config end'
 echo 'config display...'
-cp -rf ${cur_dir}/utils/display /usr/local
-python3 -m venv /usr/local/display/venv
-/usr/local/display/venv/bin/pip install -r /usr/local/display/requirements.txt
-#/usr/local/display/venv/bin/python /usr/local/display/main.py
-cp -f ${cur_dir}/conf/spiled.service /etc/systemd/system
-systemctl enable spiled.service
-systemctl start spiled.service
+chmod +x ${cur_dir}/utils/display/install.sh
+${cur_dir}/utils/display/install.sh
 echo 'config display end'
 echo 'install success, please reboot system!'

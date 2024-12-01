@@ -8,7 +8,7 @@ import psutil
 import os
 
 
-temp_sensor_dir = "/sys/class/i2c-dev/i2c-1/device/1-0048/hwmon/"
+temp_sensor_dir = "/sys/class/i2c-adapter/i2c-1/1-0048/hwmon/"
 
 
 for dir in os.listdir(temp_sensor_dir):
@@ -27,7 +27,8 @@ def get_temp(file):
 
 def draw_text(disp, text, x, y, w, h, font_size):
     img = Image.new("RGB", (w, h), color=(0, 0, 0))
-    font = ImageFont.truetype("FreeSansBold.ttf", font_size)
+    font = ImageFont.truetype("fonts/FreeSansBold.ttf", font_size)
+    #font = ImageFont.default()
     textdraw = ImageDraw.Draw(img)
     textdraw.text((0, 0), text, font=font, fill=(255,255,255))
     disp.display(img, x, y, w, h)
@@ -67,7 +68,7 @@ def draw_net(disp, x, y, w, h, font_size):
     if ip_changed(int_addresses, new_addresses):
         int_addresses = new_addresses
         img = Image.new("RGB", (w, h), color=(0, 0, 0))
-        font = ImageFont.truetype("FreeSansBold.ttf", font_size)
+        font = ImageFont.truetype("fonts/FreeSansBold.ttf", font_size)
         textdraw = ImageDraw.Draw(img)
         #textdraw.text((0, 0), text, font=font, fill=(255,255,255))
         for ipstr in new_addresses:
