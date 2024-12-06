@@ -6,9 +6,9 @@ import time
 import st7789
 import psutil
 import os
+import config
 
-
-temp_sensor_dir = "/sys/class/i2c-adapter/i2c-1/1-0048/hwmon/"
+temp_sensor_dir = config.lm75_device_hwmon
 
 
 for dir in os.listdir(temp_sensor_dir):
