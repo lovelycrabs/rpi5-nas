@@ -10,12 +10,12 @@ cur_dir=$(dirname $0)
 dts_dir=${cur_dir}/boot/firmware/overlays/
 #echo ${cur_dir}
 echo 'pwm-fan dts compiling ....'
-dtc -I dts -O dtb -o ${dts_dir}/pwm-fan.dtbo ${dts_dir}/pwm-fan.dts
-dtc -I dts -O dtb -o ${dts_dir}/pwm-fan-auto.dtbo ${dts_dir}/pwm-fan-auto.dts
+dtc -I dts -O dtb -o ${dts_dir}/pwm-fan-lm75.dtbo ${dts_dir}/pwm-fan-lm75.dts
+dtc -I dts -O dtb -o ${dts_dir}/pwm-fan-cpu.dtbo ${dts_dir}/pwm-fan-cpu.dts
 echo 'pwm-fan dts compiled'
 echo 'install dtbo'
-cp -f ${dts_dir}/pwm-fan.dtbo /boot/firmware/overlays/
-cp -f ${dts_dir}/pwm-fan-auto.dtbo /boot/firmware/overlays/
+cp -f ${dts_dir}/pwm-fan-lm75.dtbo /boot/firmware/overlays/
+cp -f ${dts_dir}/pwm-fan-cpu.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pciex1-compat-pi5.dtbo /boot/firmware/overlays/
 echo 'install dtbo end'
 echo 'enable pcie.....'
@@ -29,13 +29,10 @@ cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 #dtoverlay=i2c-sensor,lm75,i2c1,addr=0x48
 #dtparam=pciex1_gen=3
 #dtoverlay=pciex1-compat-pi5,no-mip
-#dtoverlay=pwm-fan-auto
-#dtoverlay=pwm-fan
+#dtoverlay=pwm-fan-cpu
+#dtoverlay=pwm-fan-lm75
 #EOF
 python ./utils/config.py
 echo 'firmware config end'
-echo 'config display...'
 chmod +x ${cur_dir}/utils/display/install.sh
-${cur_dir}/utils/display/install.sh
-echo 'config display end'
 echo 'install success, please reboot system!'

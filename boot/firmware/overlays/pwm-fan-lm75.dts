@@ -1,0 +1,122 @@
+/dts-v1/;
+/plugin/;
+ 
+/{
+    compatible = "brcm,bcm2712";
+
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+        
+            fan1: fan1 {
+                compatible = "pwm-fan";
+                pwms = <&rp1_pwm0 0 40000 0>;
+                cooling-levels = <0 80 170 255>;
+                        #cooling-cells = <2>;
+                cooling-min-state = <0>;
+                cooling-max-state = <3>;
+            };
+        };
+    };
+    fragment@1 {
+        target = <&rp1_gpio>;
+        __overlay__ {
+            pwm_pins: pwm_pins {
+                pins = "gpio12";
+                function = "pwm0";
+            };
+        };
+    };
+ 
+    fragment@2 {
+        target = <&rp1_pwm0>;
+        frag1: __overlay__ {
+            pinctrl-names = "default";
+            pinctrl-0 = <&pwm_pins>;
+            status = "okay";
+        };
+    };
+    fragment@3 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            lm75b: lm75b@48 {
+                compatible = "lm75";
+                reg = <0x48>;
+                status = "okay";
+                #thermal-sensor-cells = <0>;
+            };
+        };
+    };
+    fragment@4 {
+        target-path = "/thermal-zones";
+        __overlay__ {
+            sata_thermal: sata-thermal {
+                polling-delay-passive = <1000>;
+                polling-delay = <1000>;
+                thermal-sensors = <&lm75b>;
+                sensor_trips: trips {
+                    temp_crit: temp-crit {
+                        temperature	= <60000>;
+                        hysteresis	= <0>;
+                        type = "critical";
+                    };
+                    temp_tepid: temp-tepid {
+                        temperature = <40000>;
+                        hysteresis = <5000>;
+                        type = "active";
+                    };
+
+                    temp_warm: temp-warm {
+                        temperature = <45000>;
+                        hysteresis = <5000>;
+                        type = "active";
+                    };
+
+                    temp_hot: temp-hot {
+                        temperature = <50000>;
+                        hysteresis = <5000>;
+                        type = "active";
+                    };
+
+                    temp_vhot: temp-vhot {
+                        temperature = <55000>;
+                        hysteresis = <5000>;
+                        type = "active";
+                    };
+                };
+
+                cooling_maps: cooling-maps {
+                    tepid {
+                        trip = <&temp_tepid>;
+                        cooling-device = <&fan1 1 1>;
+                    };
+
+                    warm {
+                        trip = <&temp_warm>;
+                        cooling-device = <&fan1 2 2>;
+                    };
+
+                    hot {
+                        trip = <&temp_hot>;
+                        cooling-device = <&fan1 3 3>;
+                    };
+
+                    vhot {
+                        trip = <&temp_vhot>;
+                        cooling-device = <&fan1 4 4>;
+                    };
+
+                    melt {
+                        trip = <&temp_crit>;
+                        cooling-device = <&fan1 4 4>;
+                    };
+                };
+            };
+        };
+    };
+
+};
