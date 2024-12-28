@@ -21,4 +21,5 @@ dtoverlay=pwm-fan-cpu
 拷贝 pciex1-compat-pi5.dtbo 到 /boot/firmware/overlays
 编辑 /boot/firmware/config.txt 并添加一下内容
 dtparam=pciex1_gen=3
+
 dtoverlay=pciex1-compat-pi5,no-mip
