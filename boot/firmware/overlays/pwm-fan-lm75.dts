@@ -11,8 +11,8 @@
             fan1: fan1 {
                 compatible = "pwm-fan";
                 pwms = <&rp1_pwm0 0 40000 0>;
-                cooling-levels = <0 80 170 255>;
-                        #cooling-cells = <2>;
+                cooling-levels = <0 40 120 255>;
+                #cooling-cells = <2>;
                 cooling-min-state = <0>;
                 cooling-max-state = <3>;
             };

@@ -8,7 +8,7 @@ fi
 disp_dir=$(dirname $0)
 echo ${disp_dir}
 #cp -rf ${cur_dir} /usr/local
-apt install python3-dev
+apt install python3-dev libjpeg-dev zlib1g-dev libpng-dev libfreetype6-dev libxft-dev
 #if ! test -d "/usr/local/share/fonts/truetype"; then
 #    mkdir -p /usr/local/share/fonts/truetype
 #fi
