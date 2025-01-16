@@ -1,7 +1,7 @@
 ## Installation
 1.config system
 ```shell
-git clone https://gitee.com/zengqingzheng/rpi5-nas.git
+git clone https://github.com/lovelycrabs/rpi5-nas.git
 cd rpi5-nas
 sudo chmod +x install.sh
 sudo ./install.sh
