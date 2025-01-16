@@ -12,9 +12,11 @@ dts_dir=${cur_dir}/boot/firmware/overlays/
 echo 'pwm-fan dts compiling ....'
 dtc -I dts -O dtb -o ${dts_dir}/pwm-fan-lm75.dtbo ${dts_dir}/pwm-fan-lm75.dts
 dtc -I dts -O dtb -o ${dts_dir}/pwm-fan-cpu.dtbo ${dts_dir}/pwm-fan-cpu.dts
+dtc -I dts -O dtb -o ${dts_dir}/i2c-ina226.dtbo ${dts_dir}/i2c-ina226.dts
 echo 'pwm-fan dts compiled'
 echo 'install dtbo'
 cp -f ${dts_dir}/pwm-fan-lm75.dtbo /boot/firmware/overlays/
+cp -f ${dts_dir}/i2c-ina226.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pwm-fan-cpu.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pciex1-compat-pi5.dtbo /boot/firmware/overlays/
 echo 'install dtbo end'
