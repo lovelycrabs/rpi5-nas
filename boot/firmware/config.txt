@@ -55,3 +55,4 @@ dtoverlay=pciex1-compat-pi5,no-mip
 #dtoverlay=pwm,pin=12,func=4,clock=20000
 #dtoverlay=gpio-fan,gpiopin=12,temp=52000
 dtoverlay=pwm-fan-lm75
+dtoverlay=i2c-ina226

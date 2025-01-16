@@ -8,14 +8,21 @@ import psutil
 import os
 import config
 
-temp_sensor_dir = config.lm75_device_hwmon
 
-
-for dir in os.listdir(temp_sensor_dir):
-    temp_sensor_file = os.path.join(temp_sensor_dir, dir, "temp1_input")
+def get_hwmon_path(parent, filename=None):
+    if not parent:
+        return None
+    for dir in os.listdir(parent):
+        full_path = os.path.join(parent, dir)
+        if filename:
+            return os.path.join(full_path, filename)
+        else:
+            return full_path
+    return None
 
 temp_cpu_file = "/sys/class/hwmon/hwmon0/temp1_input"
-
+temp_hwmon_file = get_hwmon_path(config.lm75_device_hwmon,'temp1_input')
+ina226_hwmon_path = get_hwmon_path(config.ina226_device_hwmon)
 
 int_addresses =list()
 
@@ -79,9 +86,15 @@ def draw_net(disp, x, y, w, h, font_size):
 
 def draw_temp(disp, x, y, w, h, font_size):
     cpu_temp = get_temp(temp_cpu_file)
-    board_temp = get_temp(temp_sensor_file)
+    board_temp = get_temp(temp_hwmon_file)
     draw_text(disp,"cpu temp:{0}, board temp:{1}".format(format(cpu_temp/1000,'.1f'), format(board_temp/1000,'.1f')),x,y,w,h,font_size)
-    
+
+def draw_power(disp, x, y, w, h, font_size):
+    pw =  get_temp(os.path.join(ina226_hwmon_path, 'power1_input'))
+    vol = get_temp(os.path.join(ina226_hwmon_path, 'in1_input'))
+    draw_text(disp , "power:{0}w, vol:{1}v".format(format(pw/1000000, '.2f'), format(vol/1000,'.2f')), x, y, w, h, font_size)
+
+
 disp = st7789.ST7789(
     height=135,
     width=240,
@@ -106,7 +119,7 @@ disp.fill_rect((0,0,0),0,0)
 
 while(True):
     draw_net(disp,0,0,WIDTH, 40, 16)
-    draw_time(disp,0, 115, WIDTH, 20, 18)
+    draw_power(disp,0, 115, WIDTH, 20, 18)
     draw_cpuinfo(disp,0,44,WIDTH, 20, 18)
     draw_mem(disp,0, 64, WIDTH, 20, 16)
     draw_temp(disp, 0, 84,WIDTH, 20, 16)
