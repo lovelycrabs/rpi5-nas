@@ -8,7 +8,7 @@ fi
 disp_dir=$(dirname $0)
 echo ${disp_dir}
 #cp -rf ${cur_dir} /usr/local
-apt install python3-dev libjpeg-dev zlib1g-dev libpng-dev libfreetype6-dev libxft-dev
+apt install python3-dev libfreetype6-dev
 #if ! test -d "/usr/local/share/fonts/truetype"; then
 #    mkdir -p /usr/local/share/fonts/truetype
 #fi
@@ -28,7 +28,7 @@ else
    exit 1
 fi
 python3 -m venv ${disp_dir}/venv
-${disp_dir}/venv/bin/pip install -r ${disp_dir}/requirements.txt
+${disp_dir}/venv/bin/pip install -r ${disp_dir}/requirements.txt -i https://mirrors.aliyun.com/pypi/simple
 #/usr/local/display/venv/bin/python /usr/local/display/main.py
 if ! test -d "/usr/local/display"; then
     mkdir -p /usr/local/display

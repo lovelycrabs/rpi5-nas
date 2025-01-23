@@ -66,7 +66,7 @@
                     };
                     temp_tepid: temp-tepid {
                         temperature = <40000>;
-                        hysteresis = <5000>;
+                        hysteresis = <2000>;
                         type = "active";
                     };
 
