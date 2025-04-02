@@ -71,7 +71,7 @@
                     };
 
                     temp_vhot: temp-vhot {
-                        temperature = <60000>;
+                        temperature = <55000>;
                         hysteresis = <5000>;
                         type = "active";
                     };
@@ -91,7 +91,7 @@
 
                     melt {
                         trip = <&temp_crit>;
-                        cooling-device = <&fan1 4 4>;
+                        cooling-device = <&fan1 3 3>;
                     };
                 };
             };
