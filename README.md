@@ -12,15 +12,18 @@ sudo nano /boot/firmware/config.txt
 ```shell
 dtoverlay=pwm-fan-lm75,period=20000000
 ```
-可以通过
+[overlay配置说明](boot/firmware/overlays)
+
+可以通过下面命令查看系统功率
 ```shell
 cat /sys/class/i2c-dev/i2c-1/device/1-0040/hwmon/hwmon*/power1_input
 ```
-查看系统功率
+
+查看输入电压
 ```shell
 cat /sys/class/i2c-dev/i2c-1/device/1-0040/hwmon/hwmon*/in1_input
 ```
-查看输入电压
+
 
 2.install spi oled service
 ```shell
