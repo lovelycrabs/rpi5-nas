@@ -38,7 +38,7 @@
     };
     fragment@3 {
         target = <&i2c1>;
-        __dormant__  {
+        __overlay__ {
             #address-cells = <1>;
             #size-cells = <0>;
             status = "okay";
@@ -60,54 +60,33 @@
                 thermal-sensors = <&lm75b>;
                 sensor_trips: trips {
                     temp_crit: temp-crit {
-                        temperature	= <60000>;
+                        temperature	= <65000>;
                         hysteresis	= <0>;
                         type = "critical";
                     };
-                    temp_tepid: temp-tepid {
-                        temperature = <40000>;
-                        hysteresis = <2000>;
-                        type = "active";
-                    };
-
-                    temp_warm: temp-warm {
-                        temperature = <45000>;
-                        hysteresis = <5000>;
-                        type = "active";
-                    };
-
                     temp_hot: temp-hot {
-                        temperature = <50000>;
-                        hysteresis = <5000>;
+                        temperature = <40000>;
+                        hysteresis = <36000>;
                         type = "active";
                     };
 
                     temp_vhot: temp-vhot {
-                        temperature = <55000>;
+                        temperature = <60000>;
                         hysteresis = <5000>;
                         type = "active";
                     };
                 };
 
                 cooling_maps: cooling-maps {
-                    tepid {
-                        trip = <&temp_tepid>;
+                    hot {
+                        trip = <&temp_hot>;
                         cooling-device = <&fan1 1 2>;
                     };
 
-                    warm {
-                        trip = <&temp_warm>;
-                        cooling-device = <&fan1 2 3>;
-                    };
-
-                    hot {
-                        trip = <&temp_hot>;
-                        cooling-device = <&fan1 3 4>;
-                    };
 
                     vhot {
                         trip = <&temp_vhot>;
-                        cooling-device = <&fan1 4 4>;
+                        cooling-device = <&fan1 2 3>;
                     };
 
                     melt {
@@ -119,14 +98,12 @@
         };
     };
     __overrides__ {
-        period =    <&fan1>,"pwms:2";
-        addr =      <&lm75b>,"reg:0";
-        tepidtemp = <&temp_tepid>,"temperature:0";
-        tepidhyst = <&temp_tepid>,"hysteresis:0";
-        warmtemp =  <&temp_warm>,"temperature:0";
-        warmhyst =  <&temp_warm>,"hysteresis:0";
-        hottemp =   <&temp_hot>,"temperature:0";
-        hothyst =   <&temp_hot>,"hysteresis:0";
+      period =		<&fan1>,"pwms:8";
+      min_pwm =		<&fan1>,"cooling-levels:4";
+      hot_temp =	<&temp_hot>,"temperature:0";
+      hot_hyst =	<&temp_hot>,"hysteresis:0";
+      vhot_temp =	<&temp_vhot>,"temperature:0";
+      vhot_hyst =	<&temp_vhot>,"hysteresis:0";
+      critical_temp =	<&temp_crit>,"temperature:0";
     };
-
 };
