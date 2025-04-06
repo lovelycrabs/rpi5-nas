@@ -17,7 +17,20 @@ pwm-fan-cpu  根据cpu温度对风扇进行调速， 如果使用cpu进行调速
 
 追加一下内容：
 
-dtoverlay=pwm-fan-lm75
+dtoverlay=pwm-fan-lm75,period=25000,hot_temp=40000,vhot_tem=60000
+
+period:周期单位ns,25000ns,频率freq=1000000000/25000=40000hz
+
+
+hot_temp风扇启转温度，40000为40摄氏度
+
+
+vhot_temp:高温，高温pwm占空比从120/255到1
+
+
+critical_temp:零界温度，超过该温度系统将自动关机，默认65000
+
+
 
 如果想根据cpu温度调节风扇的速度可以改成
 
