@@ -11,10 +11,10 @@
             fan1: fan1 {
                 compatible = "pwm-fan";
                 pwms = <&rp1_pwm0 0 25000 0>;
-                cooling-levels = <0 40 120 255>;
+                cooling-levels = <0 64 128 192 255>;
                 #cooling-cells = <2>;
                 cooling-min-state = <0>;
-                cooling-max-state = <3>;
+                cooling-max-state = <4>;
             };
         };
     };
@@ -56,28 +56,42 @@
         __overlay__ {
             sata_thermal: sata-thermal {
                 polling-delay-passive = <1000>;
-                polling-delay = <1000>;
+                polling-delay = <2000>;
                 thermal-sensors = <&lm75b>;
                 sensor_trips: trips {
-                    temp_crit: temp-crit {
-                        temperature	= <65000>;
-                        hysteresis	= <0>;
-                        type = "critical";
+                    temp_warm:temp-warm {
+                        temperature = <42000>;
+                        hysteresis = <3000>;
+                        type = "active";
                     };
                     temp_hot: temp-hot {
-                        temperature = <40000>;
+                        temperature = <45000>;
                         hysteresis = <3000>;
                         type = "active";
                     };
 
                     temp_vhot: temp-vhot {
-                        temperature = <55000>;
+                        temperature = <50000>;
                         hysteresis = <5000>;
                         type = "active";
                     };
+                    temp_vvhot: temp-vvhot {
+                        temperature = <60000>;
+                        hysteresis = <5000>;
+                        type = "active";
+                    };
+		    temp_crit: temp-crit {
+			temperature = <65000>; /* millicelsius */
+			hysteresis = <0>; /* millicelsius */
+			type = "critical";
+		    };
                 };
 
-                cooling_maps: cooling-maps {
+                cooling-maps {
+                    warm {
+                        trip = <&temp_warm>;
+                        cooling-device = <&fan1 0 1>;
+                    };
                     hot {
                         trip = <&temp_hot>;
                         cooling-device = <&fan1 1 2>;
@@ -89,9 +103,9 @@
                         cooling-device = <&fan1 2 3>;
                     };
 
-                    melt {
-                        trip = <&temp_crit>;
-                        cooling-device = <&fan1 3 3>;
+                    vvhot {
+                        trip = <&temp_vvhot>;
+                        cooling-device = <&fan1 3 4>;
                     };
                 };
             };
@@ -100,10 +114,12 @@
     __overrides__ {
       period =		<&fan1>,"pwms:8";
       min_pwm =		<&fan1>,"cooling-levels:4";
+      warm_temp =        <&temp_warm>,"temperature:0";
+      warm_hyst =        <&temp_warm>,"hysteresis:0";
       hot_temp =	<&temp_hot>,"temperature:0";
       hot_hyst =	<&temp_hot>,"hysteresis:0";
       vhot_temp =	<&temp_vhot>,"temperature:0";
       vhot_hyst =	<&temp_vhot>,"hysteresis:0";
-      critical_temp =	<&temp_crit>,"temperature:0";
+      vvhot_temp =	<&temp_vvhot>,"temperature:0";
     };
 };
