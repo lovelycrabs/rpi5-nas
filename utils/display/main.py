@@ -6,23 +6,30 @@ import time
 import st7789
 import psutil
 import os
-import config
 
+hwmon_base_path = "/sys/class/hwmon"
 
-def get_hwmon_path(parent, filename=None):
-    if not parent:
-        return None
-    for dir in os.listdir(parent):
-        full_path = os.path.join(parent, dir)
-        if filename:
-            return os.path.join(full_path, filename)
-        else:
-            return full_path
+def get_string(file):
+    str = None
+    with open(file, 'r') as f:
+        str = f.read().strip()
+    return str
+
+def get_hwmon_path(dev_name):
+    for dir in os.listdir(hwmon_base_path):
+        full_path = os.path.join(hwmon_base_path, dir)
+        dev_name_file = os.path.join(full_path, "name")
+        if os.path.exists(dev_name_file):
+            hw_name = get_string(dev_name_file)
+            #print(hw_name)
+            if hw_name == dev_name:
+                return full_path
+
     return None
 
-temp_cpu_file = "/sys/class/hwmon/hwmon0/temp1_input"
-temp_hwmon_file = get_hwmon_path(config.lm75_device_hwmon,'temp1_input')
-ina226_hwmon_path = get_hwmon_path(config.ina226_device_hwmon)
+temp_cpu_file = hwmon_base_path + "/hwmon0/temp1_input"
+lm75_hwmon_path = get_hwmon_path("lm75")
+ina226_hwmon_path = get_hwmon_path("ina226")
 
 int_addresses =list()
 
@@ -30,7 +37,7 @@ def get_temp(file):
     temp = 0
     with open(file, 'r') as f:
         temp = int(f.read())
-    return temp;
+    return temp
 
 def draw_text(disp, text, x, y, w, h, font_size):
     img = Image.new("RGB", (w, h), color=(0, 0, 0))
@@ -64,7 +71,7 @@ def ip_changed(a, b):
 
 def draw_net(disp, x, y, w, h, font_size):
     interfaces = psutil.net_if_addrs()
-    global int_addresses;
+    global int_addresses
     new_addresses = list()
     h_offset=0
     for name, addrs in interfaces.items():
@@ -86,13 +93,34 @@ def draw_net(disp, x, y, w, h, font_size):
 
 def draw_temp(disp, x, y, w, h, font_size):
     cpu_temp = get_temp(temp_cpu_file)
-    board_temp = get_temp(temp_hwmon_file)
-    draw_text(disp,"cpu temp:{0}, board temp:{1}".format(format(cpu_temp/1000,'.1f'), format(board_temp/1000,'.1f')),x,y,w,h,font_size)
+    if lm75_hwmon_path:
+        temp_hwmon_file = os.path.join(lm75_hwmon_path, "temp1_input")
+        if os.path.exists(temp_hwmon_file):
+            temp_value = get_temp(temp_hwmon_file)
+            board_temp = format(temp_value/1000,'.1f')
+        else:
+            board_temp = "err"
+    else:
+        board_temp = "err"
+    draw_text(disp,"cpu temp:{0}, board temp:{1}".format(format(cpu_temp/1000,'.1f'), board_temp),x,y,w,h,font_size)
 
 def draw_power(disp, x, y, w, h, font_size):
-    pw =  get_temp(os.path.join(ina226_hwmon_path, 'power1_input'))
-    vol = get_temp(os.path.join(ina226_hwmon_path, 'in1_input'))
-    draw_text(disp , "power:{0}w, vol:{1}v".format(format(pw/1000000, '.2f'), format(vol/1000,'.2f')), x, y, w, h, font_size)
+    if not ina226_hwmon_path:
+        draw_time(disp, x, y, w, h, font_size)
+        return
+    pw_file = os.path.join(ina226_hwmon_path, 'power1_input')
+    if os.path.exists(pw_file):
+        pw_val = get_temp(pw_file)
+        pw = format(pw_val/1000000, '.2f')
+    else:
+        pw = "err"
+    vol_file = os.path.join(ina226_hwmon_path, 'in1_input')
+    if os.path.exists(vol_file):
+        vol_val = get_temp(vol_file)
+        vol = format(vol_val/1000, '.2f')
+    else:
+        vol = "err"
+    draw_text(disp , "power:{0}w, vol:{1}v".format(pw, vol), x, y, w, h, font_size)
 
 
 disp = st7789.ST7789(
