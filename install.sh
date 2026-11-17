@@ -18,11 +18,19 @@ echo 'install dtbo'
 cp -f ${dts_dir}/pwm-fan-lm75.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/i2c-ina226.dtbo /boot/firmware/overlays/
 cp -f ${dts_dir}/pwm-fan-cpu.dtbo /boot/firmware/overlays/
-cp -f ${dts_dir}/pciex1-compat-pi5.dtbo /boot/firmware/overlays/
+#cp -f ${dts_dir}/pciex1-compat-pi5.dtbo /boot/firmware/overlays/
 echo 'install dtbo end'
 echo 'enable pcie.....'
-rpi-eeprom-config -a ${cur_dir}/conf/bootconf.txt
-echo 'pcie enabled!'
+if command -v rpi-eeprom-config >/dev/null 2>&1; then
+    if rpi-eeprom-config -a ${cur_dir}/conf/bootconf.txt; then
+        echo 'pcie enabled!'
+    else
+        echo 'rpi-eeprom-config failed.' >&2
+        exit 1
+    fi
+else
+    echo 'rpi-eeprom-config not installed, skipping PCIe configuration.'
+fi
 echo 'firmware config....'
 cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 #sed -i 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/g' /boot/firmware/config.txt
@@ -36,5 +44,5 @@ cp -f /boot/firmware/config.txt /boot/firmware/config.txt.bak
 #EOF
 python ./utils/config.py
 echo 'firmware config end'
-chmod +x ${cur_dir}/utils/display/install.sh
+#chmod +x ${cur_dir}/utils/display/install.sh
 echo 'install success, please reboot system!'
