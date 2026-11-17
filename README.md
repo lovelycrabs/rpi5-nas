@@ -31,6 +31,6 @@ cat /sys/class/i2c-adapter/i2c-1/1-0048/hwmon/hwmon*/temp1_input
 
 2.install spi oled service
 ```shell
-cd rpi5-nas/utils/display
-sudo ./install.sh
+git clone https://github.com/lovelycrabs/pinas-display.git
+sudo bash pinas-display/install.sh --board rpi5-nas
 ```
